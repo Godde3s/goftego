@@ -1,0 +1,14 @@
+services:
+  goftego:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - DB_PATH=/data/goftego.db
+    volumes:
+      - goftego-data:/data
+    restart: unless-stopped
+
+volumes:
+  goftego-data:

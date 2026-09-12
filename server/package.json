@@ -1,0 +1,23 @@
+{
+  "name": "goftego-server",
+  "version": "1.0.0",
+  "description": "Goftego chat platform — API + realtime server",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0",
+    "vitest": "^2.0.5"
+  }
+}
