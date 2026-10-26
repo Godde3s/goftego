@@ -73,8 +73,9 @@ docker compose up --build                      # → http://localhost:3000
 - Sessions: signed JWTs; the WS handshake re-verifies the token
 - Input: username charset enforcement, message length caps (4,000),
   JSON body limit 256 KB
-- Secrets: `JWT_SECRET` env var (auto-generated per boot if unset — set
-  it in production!)
+- Secrets: `JWT_SECRET` env var — unset in dev it falls back to an ephemeral
+  per-boot secret (warning logged), while `NODE_ENV=production` **refuses to
+  boot** without it. Generate one: `openssl rand -base64 48`
 
 ### Testing
 

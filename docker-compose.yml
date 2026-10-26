@@ -4,7 +4,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      # No guessable default here: an empty value makes the server generate a
+      # random per-boot secret (fine for dev), and NODE_ENV=production refuses
+      # to boot without an explicit JWT_SECRET. Set it in your .env / shell:
+      #   JWT_SECRET=$(openssl rand -base64 48)
+      - JWT_SECRET=${JWT_SECRET:-}
+      - NODE_ENV=${NODE_ENV:-development}
       - DB_PATH=/data/goftego.db
     volumes:
       - goftego-data:/data

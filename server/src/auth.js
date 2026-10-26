@@ -2,7 +2,31 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { randomUUID } from 'node:crypto'
 
-const JWT_SECRET = process.env.JWT_SECRET || randomUUID()   // rotate in production!
+const IS_PROD = (process.env.NODE_ENV ?? '').toLowerCase() === 'production'
+
+// An unset JWT_SECRET must never reach production silently:
+//   - an ephemeral (per-boot) secret logs every user out on each restart and
+//     breaks multi-instance deployments (tokens issued by instance A are
+//     rejected by instance B),
+//   - a guessable secret hands out free token forgery.
+// Dev keeps the convenient ephemeral secret, but with a loud warning.
+function resolveJwtSecret() {
+  const fromEnv = process.env.JWT_SECRET?.trim()
+  if (fromEnv) return fromEnv
+  if (IS_PROD) {
+    throw new Error(
+      '[auth] refusing to boot in production without JWT_SECRET. ' +
+        'Generate one with: openssl rand -base64 48',
+    )
+  }
+  console.warn(
+    '[auth] JWT_SECRET is not set — using an ephemeral per-boot secret; ' +
+      'every restart logs all users out. Set JWT_SECRET for anything beyond local dev.',
+  )
+  return randomUUID()
+}
+
+const JWT_SECRET = resolveJwtSecret()
 const TOKEN_TTL = '7d'
 
 export function authRoutes(app, data) {
